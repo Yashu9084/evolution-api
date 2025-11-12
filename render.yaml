@@ -1,10 +1,7 @@
 services:
-  # === Evolution API web service ===
   - type: web
     name: evolution-api
     runtime: node
-    region: frankfurt          # change to your closest region
-    plan: free                 # or starter/pro
     buildCommand: "npm ci"
     startCommand: "npm start"
     envVars:
@@ -19,20 +16,20 @@ services:
       - key: REDIS_URL
         fromService:
           name: evo-redis
-          type: keyvalue       # or "redis" (alias)
+          type: keyvalue
+          property: connectionString   # << required
       - key: JWT_SECRET
         generateValue: true
-    healthCheckPath: "/health" # change if your app uses a different route
+    healthCheckPath: "/health"
 
-  # === Redis / Key Value instance ===
-  - type: keyvalue             # "redis" also works as an alias
+  - type: keyvalue
     name: evo-redis
     plan: free
-    ipAllowList:               # REQUIRED by Render Blueprints
-      - source: 0.0.0.0/0      # easiest: allow all (use internal URL in app)
-        description: allow all (use internal URL)
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: allow all
 
 databases:
   - name: evo-postgres
     databaseName: evolution
-    plan: free                 # or starter/pro
+    plan: free
